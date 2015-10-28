@@ -35,6 +35,8 @@ and the regions come closer together in values.
 
 ## <a name="Design"></a> DESIGN
 
+[All Design Choices and Changes](http://www.stephendwells.com/beer_after_prohibition/process.html)
+
 ### SCATTER PLOT TURNED LINE GRAPH
 
 [LIVE PLOT EXAMPLE](http://www.stephendwells.com/beer_after_prohibition/plot.html)
