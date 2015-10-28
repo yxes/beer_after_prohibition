@@ -121,7 +121,7 @@ I have nothing to say other than that they were both spot on.
 
 Websites, Presentations, Forums and Source Code Links
 
-* [CSS Button Generator)[http://css3buttongenerator.com/)
+* [CSS Button Generator](http://css3buttongenerator.com/)
 * [D3 Documentation](https://github.com/mbostock/d3/wiki)
 * [D3 Map Example](http://bost.ocks.org/mike/map/)
 * [JS setInterval function](http://www.w3schools.com/jsref/met_win_setinterval.asp)
