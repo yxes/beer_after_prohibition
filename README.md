@@ -98,7 +98,8 @@ As the development process continued, I was able to stop at various points
 and get feedback before continuing. It's an extensive process and I outlined
 each step inside of an [easter egg](#egg) within the live application. However,
 I have provided a 
-[direct link](http://stephendwells.com/beer_after_prohibition/process.html) for you.
+[direct link](http://www.stephendwells.com/beer_after_prohibition/process.html)
+for you.
 
 ### Sketches
 
