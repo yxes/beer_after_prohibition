@@ -147,7 +147,7 @@ Wait until after the animation stops and select the following years in this orde
 * 1937
 * 1941
 
-this will reveal the entire process of designing the app and the iterations
+This will reveal the entire process of designing the app and the iterations
 that I went through as it was being developed.
 
 ## <a name="Motivation"></a> MOTIVATION
@@ -183,6 +183,7 @@ Competition in the American Market, 1933-1958." *The Business History Review*
 Vol. 65, No. 2 (Summer, 1991): 229-284. Print.
 
 <http://www.stat.ufl.edu/~winner/data/beerreg.dat>
+
 <http://www.stat.ufl.edu/~winner/data/beerreg.txt>
 
 The original data file **beerreg.dat** held a lot of information that
@@ -195,4 +196,5 @@ the script in the [helper_scripts](helper_scripts/) directory.
 Big Thanks to [Mike Bostock](http://bost.ocks.org/mike/)!
 
 <http://bl.ocks.org/mbostock/raw/4090846/us.json>
+
 <http://bl.ocks.org/mbostock/raw/4090846/us-state-names.tsv>
