@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <title>Beer Consumption by Region</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+ 
+  <meta charset="utf-8">
+  <style>
+    h2, h4 {
+      text-align: center;
+      margin: 0px;
+      color: white;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    h4 {
+      opacity: .5;
+     }
+    .land {
+      fill: #ccc;
+    }
+    .state-boundary {
+      fill: none;
+      stroke: #fff;
+    }
+    div.left_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 30px;
+    }
+    div.right_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 1120px;
+    }
+    div.years_buttons div {
+      font-weight: bold;
+      background-color: #6FA7FF;
+      color: #000;
+      padding: 7px;
+      margin: 10px;
+
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      border-radius: 50px;
+    }
+   </style>
+ </head>
+
+ <body>
+  <script>
+    var width = 1200,
+        height = 700,
+        regions = {
+           'Pacific': {
+               'states': ['AK','CA','HI','ID','NV','OR','WA'],
+               'color': '#002D70',
+               'center': [250, 200],
+               'region_no': 1
+           },
+           'Rockies': {
+               'states': ['AZ','CO','MT','NM','UT','WY'],
+               'color': '#00388B',
+               'center': [400, 325],
+               'region_no': 2
+           },
+           'West North Central': {
+               'states': ['IL','IA','KS','MN','MO','NE','ND','SD','WI'],
+               'color': '#004FC5',
+               'center': [600, 225],
+               'region_no': 3
+           },
+           'East North Central': {
+	       'states': ['IN','KY','MI','OH','WV'],
+	       'color': '#0159DF',
+               'center': [800, 275],
+               'region_no': 4
+           },
+           'Northeast': {
+	       'states': ['CT','DE','DC','ME','MD','MA','NH','NJ','NY','PA','RI','VT'],
+	       'color': '#106FFF',
+               'center': [940,175],
+               'region_no': 5
+           },
+	   'South Central': {
+	       'states': ['AR','LA','OK','TX'],
+	       'color': '#3686FF',
+               'center': [575, 425],
+               'region_no': 6
+	   },
+	   'Southeast': {
+	       'states': ['AL','FL','GA','MS','NC','SC','TN','VA'],
+	       'color': '#5A9DFE',
+               'center': [800, 400],
+               'region_no': 7
+	   },
+	};
+
+    var state_color = function(state) {
+	for (region in regions) {
+	    for (stateidx in regions[region]['states']) {
+
+		if (regions[region]['states'][stateidx] == state) {
+		   return regions[region]['color'];
+		}
+	     }
+	}
+	return "black";
+    };
+
+    d3.select("body")
+      .attr("bgcolor", "#000");
+
+    d3.select("body")
+      .append("h2")
+      .text("US Beer Consumption following Prohibition");
+
+    d3.select("body")
+      .append("h4")
+      .text("Annual Per Capita (gallons) consumption of Beer by U.S. Region");
+
+    var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
+    svg.append("rect")
+	.attr("class", "background")
+	.attr("width", width)
+	.attr("height", height);
+
+    var g = svg.append("g")
+	.attr("transform", "translate(" + (width / 2)  + "," + (height / 2 - 150) + ")")
+	.append("g")
+	.attr("id", "states");
+
+    var projection = d3.geo.albersUsa()
+	.scale(width)
+	.translate([0, 100]);
+
+    var path = d3.geo.path()
+	.projection(projection);
+
+    draw();
+
+    function draw() {
+	d3.json("us2.json", function(us) {
+	    var data = topojson.feature(us, us.objects.states).features;
+
+	    // our names
+	    d3.tsv("us-state-names.tsv", function(tsv) {
+		// extract just the names and Ids
+		var names = {};
+		tsv.forEach(function(d, i) {
+		    names[d.id] = d.code;
+		});
+	  
+		// build paths
+		g.append("g")
+		 .attr("class", "states-bundle")
+		 .selectAll("path")
+		 .data(data)
+		 .enter()
+		 .append("path")
+		 .attr("d", path)
+		 .attr("fill", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("stroke", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("class", "states");
+
+	   }); // state names function
+       }); // us data function
+
+       var years = { left: [], right: [] };
+       for (var i = 1934; i < 1958; i++) {
+	   if (i < 1946) {
+	      years['left'].push(i);
+           }else{
+	      years['right'].push(i);
+	   }
+       }
+
+       var beerdata = d3.tsv("beerreg.tsv", function(error, data) {
+           if (error) throw error;
+
+           var format = d3.time.format("%Y");
+
+           data.forEach(function(d) {
+               d['year'] = format.parse(d['year']);
+               d['drunk'] = +d['drunk'];
+               d['region'] = +d['region'];
+               return d;
+           });
+
+           var labels =
+              svg.selectAll("text")
+                 .data(Object.keys(regions))
+                 .enter()
+                 .append("text")
+                 .attr("x", function(d) {
+                     return regions[d]['center'][0] - (d.length * 3.5);
+                 })
+                 .attr("y", function(d) {
+                     return regions[d]['center'][1];
+                 })
+                 .attr("font-size", "20px")
+                 .attr("fill", function(d) {
+                     return "white";
+                 })
+                 .text(function(d) {
+                     return d;
+                 });
+
+           var label_year = function(year) {
+               labels.attr("x", function(d) {
+                         return regions[d]['center'][0];
+                     })
+                     .attr("y", function(d) {
+                         return regions[d]['center'][1];
+                     })
+                     .text(function(d) {
+                         var drunk = 0;
+                         data.forEach(function(row) {
+                             if ( (row['region'] == regions[d]['region_no']) &&
+                                  (row['year'].getFullYear() == year) ) {
+                                 return drunk = row['drunk'];
+                             }
+                         });
+                         return drunk.toString();
+                     });
+           };
+
+           var reference_graph = function(d) {
+               var drunk_this_year = []; // { drunk: | color: | w: | x: } ordered by regions
+
+               var total_drunk = 0;
+               // start by extracting year values from the data
+               for (var idx in data) {
+                   if (data[idx]['year'].getFullYear() == d) {
+                       // color
+                       color = "";
+                       for (var region in regions) {
+                           if (regions[region]['region_no'] == data[idx]['region']) {
+                              color = regions[region]['color'];
+                              break;
+                           }
+                       }
+
+                       // build up our dataset - ensure we are ordered by our region number
+                       drunk_this_year[data[idx]['region'] - 1] = { 
+                          drunk: data[idx]['drunk'],
+                          color: color
+                       };
+
+                       total_drunk += data[idx]['drunk']; // we need this for the widths
+                   }
+	       }
+
+               // using the total_drunk value  we calculate the percentages (for the widths)
+               for (idx in drunk_this_year) {
+                   drunk_this_year[idx]['w'] = (drunk_this_year[idx]['drunk'] / total_drunk) * 975;
+               }
+
+               // now that I am at my widths end (sorry) - we can calculate the x values
+               var total_widths = 115;
+               for (idx in drunk_this_year) {
+                   drunk_this_year[idx]['x'] = total_widths;
+                   total_widths += drunk_this_year[idx]['w'];
+               }
+debugger;
+               svg.selectAll(".chart")
+                  .data(drunk_this_year)
+                  .enter()
+                  .append("rect")
+                  .attr("class","chart")
+                  .attr("x", function(d) {
+debugger;
+                      return d['x'];
+                  })
+                  .attr("y", 600)
+                  .attr("width", function(d) {
+                      return d['w'];
+                  })
+                  .attr("height", 40)
+                  .attr("fill", function(d) {
+                       return d['color'];
+                  });
+           }; // reference graph
+/*
+           var reference_graph =
+               svg.append("rect")
+                  .attr("x", 115)
+                  .attr("y", 600)
+                  .attr("width", 975)
+                  .attr("height", 40)
+                  .attr("fill", "white");
+  */
+           var year_text = svg.append("text")
+                              .attr("x", width / 2 - 300)
+                              .attr("y", height / 2 + 50)
+                              .attr("font-size", "300px")
+                              .attr("fill", "white")
+                              .style("opacity", "0.25");
+
+	   var year_idx = 0;
+           years['all'] = years['left'].concat(years['right']);
+
+	   var year_interval = setInterval(function() {
+	           label_year(years['all'][year_idx++]);
+
+                   year_text.text(years['all'][year_idx]);
+
+                   if (year_idx >= years['all'].length) {
+                       year_text.text("");
+                       clearInterval(year_interval);
+
+                       // draw year buttons
+		       var left_buttons = 
+			   d3.select("body")
+			     .append("div")
+			     .attr("class","left_years_buttons years_buttons")
+			     .selectAll(".left_years_buttons")
+			     .data(years['left'])
+			     .enter()
+			     .append("div")
+			     .text(function(d) {
+				 return d;
+			     });
+
+		       var right_buttons = 
+			   d3.select("body")
+			     .append("div")
+			     .attr("class","right_years_buttons years_buttons")
+			     .selectAll(".right_years_buttons")
+			     .data(years['right'])
+			     .enter()
+			     .append("div")
+			     .text(function(d) {
+				 return d;
+			     });
+
+		       // mouse events - make buttons clickable	
+		       left_buttons.on("click", function(d) {
+			       d3.selectAll(".years_buttons")
+				 .selectAll("div")
+				 .transition()
+				 .duration(500)
+				 .style("background", '#6FA7FF');
+
+			       d3.select(this)
+				 .transition()
+				 .duration(500)
+				 .style("background", "white");
+
+			       label_year(d);
+		       });
+	   
+		       right_buttons.on("click", function(d) {
+			       d3.selectAll(".years_buttons")
+				 .selectAll("div")
+				 .transition()
+				 .duration(500)
+				 .style("background", '#6FA7FF');
+
+			       d3.select(this)
+				 .transition()
+				 .duration(500)
+				 .style("background", "white");
+
+                               reference_graph(d);
+
+			       label_year(d);
+		       });
+           //            reference_graph.attr("fill", "black");
+  
+               } // if statement - end of iterations
+  
+           }, 100);
+
+     });
+  } // draw() 
+
+</script>
+</body>
+</html>

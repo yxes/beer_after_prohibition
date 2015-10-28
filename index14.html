@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <title>Beer Consumption by Region</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+ 
+  <meta charset="utf-8">
+  <style>
+    h2, h4 {
+      text-align: center;
+      margin: 0px;
+      color: white;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    h4 {
+      opacity: .5;
+     }
+    .land {
+      fill: #ccc;
+    }
+    .state-boundary {
+      fill: none;
+      stroke: #fff;
+    }
+    div.left_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 30px;
+    }
+    div.right_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 1120px;
+    }
+    div.years_buttons div {
+      font-weight: bold;
+      background-color: #6FA7FF;
+      color: #000;
+      padding: 7px;
+      margin: 10px;
+
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      border-radius: 50px;
+    }
+   </style>
+ </head>
+
+ <body>
+  <script>
+    var selected_year = '', // placeholder
+        width = 1200,
+        height = 700,
+        regions = {
+           'Pacific': {
+               'states': ['AK','CA','HI','ID','NV','OR','WA'],
+               'color': '#002D70',
+               'center': [250, 200],
+               'region_no': 1
+           },
+           'Rockies': {
+               'states': ['AZ','CO','MT','NM','UT','WY'],
+               'color': '#00388B',
+               'center': [400, 325],
+               'region_no': 2
+           },
+           'West North Central': {
+               'states': ['IL','IA','KS','MN','MO','NE','ND','SD','WI'],
+               'color': '#004FC5',
+               'center': [600, 225],
+               'region_no': 3
+           },
+           'East North Central': {
+	       'states': ['IN','KY','MI','OH','WV'],
+	       'color': '#0159DF',
+               'center': [800, 275],
+               'region_no': 4
+           },
+           'Northeast': {
+	       'states': ['CT','DE','DC','ME','MD','MA','NH','NJ','NY','PA','RI','VT'],
+	       'color': '#106FFF',
+               'center': [940,175],
+               'region_no': 5
+           },
+	   'South Central': {
+	       'states': ['AR','LA','OK','TX'],
+	       'color': '#3686FF',
+               'center': [575, 425],
+               'region_no': 6
+	   },
+	   'Southeast': {
+	       'states': ['AL','FL','GA','MS','NC','SC','TN','VA'],
+	       'color': '#5A9DFE',
+               'center': [800, 400],
+               'region_no': 7
+	   },
+	},
+        events = {
+           1934: ['Great Depression','officially started in 1929'],
+           1935: ['Great Depression','Dust Bowl - Black Sunday'],
+           1936: ['Great Depression','Hindenburg disaster'],
+           1937: ['World War II','starts in July'],
+           1938: ['World War II','Austria annexed by Germany'],
+           1939: ['World War II','Germany invades Poland'],
+           1940: ['World War II','Germans enter Paris'],
+           1941: ['World War II','US Joins the war in Dec'],
+           1942: ['World War II',''],
+           1943: ['World War II',''],
+           1944: ['World War II',''],
+           1945: ['World War II','end of war in May'],
+           1954: ['Economy','Pre-depression Stock levels'],
+           1955: ['Vietnam War','start of the war in November'],
+           1956: ['Vietnam War','US training Vietnamese'],
+           1957: ['Vietnam War','terrorist bombings in Saigon']
+       };
+           
+    var state_color = function(state) {
+	for (region in regions) {
+	    for (stateidx in regions[region]['states']) {
+
+		if (regions[region]['states'][stateidx] == state) {
+		   return regions[region]['color'];
+		}
+	     }
+	}
+	return "black";
+    };
+
+    d3.select("body")
+      .attr("bgcolor", "#000");
+
+    d3.select("body")
+      .append("h2")
+      .text("US Beer Consumption following Prohibition");
+
+    d3.select("body")
+      .append("h4")
+      .text("Annual Per Capita consumption of Beer by U.S. Region");
+
+    var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
+    svg.append("rect")
+	.attr("class", "background")
+	.attr("width", width)
+	.attr("height", height);
+
+    var g = svg.append("g")
+	.attr("transform", "translate(" + (width / 2)  + "," + (height / 2 - 150) + ")")
+	.append("g")
+	.attr("id", "states");
+
+    var projection = d3.geo.albersUsa()
+	.scale(width)
+	.translate([0, 100]);
+
+    var path = d3.geo.path()
+	.projection(projection);
+
+    draw();
+
+    function draw() {
+	d3.json("us2.json", function(us) {
+	    var data = topojson.feature(us, us.objects.states).features;
+
+	    // our names
+	    d3.tsv("us-state-names.tsv", function(tsv) {
+		// extract just the names and Ids
+		var names = {};
+		tsv.forEach(function(d, i) {
+		    names[d.id] = d.code;
+		});
+	  
+		// build paths
+		g.append("g")
+		 .attr("class", "states-bundle")
+		 .selectAll("path")
+		 .data(data)
+		 .enter()
+		 .append("path")
+                 .attr('opacity', .8)
+		 .attr("d", path)
+		 .attr("fill", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("stroke", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("class", "states");
+
+	   }); // state names function
+       }); // us data function
+
+       var years = { left: [], right: [] };
+       for (var i = 1934; i < 1958; i++) {
+	   if (i < 1946) {
+	      years['left'].push(i);
+           }else{
+	      years['right'].push(i);
+	   }
+       }
+
+       var beerdata = d3.tsv("beerreg.tsv", function(error, data) {
+           if (error) throw error;
+
+           var format = d3.time.format("%Y");
+
+           data.forEach(function(d) {
+               d['year'] = format.parse(d['year']);
+               d['drunk'] = +d['drunk'];
+               d['region'] = +d['region'];
+               return d;
+           });
+
+           var pints =
+               svg.selectAll("image")
+                  .data(Object.keys(regions))
+                  .enter()
+                  .append("image")
+                  .attr("class", "pint")
+                  .attr("x", function(d) {
+                      return regions[d]['center'][0] - 64;
+                  })
+                  .attr("y", function(d) {
+                      return regions[d]['center'][1] - 32;
+                  })
+                  .attr("xlink:href", "/pint.png");
+
+           var labels =
+              svg.selectAll("text")
+                 .data(Object.keys(regions))
+                 .enter()
+                 .append("text")
+                 .attr("class", "labels")
+                 .attr("x", function(d) {
+                     return regions[d]['center'][0] - (d.length * 3.5);
+                 })
+                 .attr("y", function(d) {
+                     return regions[d]['center'][1];
+                 })
+                 .attr("font-size", "20px")
+                 .attr("fill", function(d) {
+                     return "white";
+                 })
+                 .text(function(d) {
+                     return d;
+                 });
+
+           var header =
+               svg.append("text")
+                  .attr("class", "header")
+                  .attr("font-size", "80px")
+                  .attr("x", "150")
+                  .attr("y", "150")
+                  .attr("opacity", "0.4")
+                  .attr("fill", "white");
+
+           var event_text =
+               svg.append("text")
+                  .attr("class","event")
+                  .attr("font-size", "20px")
+                  .attr("x", "900")
+                  .attr("y", "425")
+                  .attr("fill","white");
+
+           var total_gallons =
+               svg.append("text")
+                  .attr("class", "total")
+                  .attr("font-size", "20px")
+                  .attr("x", "1000")
+                  .attr("y", "350")
+                  .attr("fill","white");
+
+           // used to build out reference graph RETURNS: [drunk_this_year, total_drunk]
+           var aggregate_years_data = function(d) {
+               var drunk_this_year = []; // { drunk: | color: | region_name: | w: | x: } ordered by regions
+
+               var total_drunk = 0;
+               // start by extracting year values from the data
+               for (var idx in data) {
+                   if (data[idx]['year'].getFullYear() == d) {
+                       // color and region name
+                       color = "";
+                       for (var region in regions) {
+                           if (regions[region]['region_no'] == data[idx]['region']) {
+                              color = regions[region]['color'];
+                              region_name = region
+                              break;
+                           }
+                       }
+
+                       // build up our dataset - ensure we are ordered by our region number
+                       drunk_this_year[data[idx]['region'] - 1] = { 
+                          drunk: data[idx]['drunk'],
+                          color: color,
+                          region_name: region_name
+                       };
+
+                       total_drunk += data[idx]['drunk']; // we need this for the widths
+                   }
+	       }
+
+               // using the total_drunk value  we calculate the percentages (for the widths)
+               for (idx in drunk_this_year) {
+                   drunk_this_year[idx]['w'] = (drunk_this_year[idx]['drunk'] / total_drunk) * 4000;
+               }
+
+               return [drunk_this_year, total_drunk];
+           };
+
+
+           var label_year = function(year) {
+
+               // given a region name - return the pints per week for this year
+               var pints_per_week = function(region) {
+                   var drunk = 0;
+                   data.forEach(function(row) {
+                       if ( (row['region'] == regions[region]['region_no']) &&
+                            (row['year'].getFullYear() == year) ) {
+                              return drunk = (Math.floor((row['drunk'] * 8 / 52) * 10) / 10);
+                       }
+                   });
+                   return drunk;
+               };
+
+               pints.attr("width", function(d) {
+                        // ensure we are displaying according to scale
+                        var area = 64 * 64 * pints_per_week(d);
+                        return Math.sqrt(area).toString();
+                    })
+                    .attr("height", function(d) {
+                        // base height / width = 64 X 64
+                        var area = 64 * 64 * pints_per_week(d);
+                        return Math.sqrt(area).toString();
+                    });
+
+               labels.attr("x", function(d) {
+                         return regions[d]['center'][0] + 10;
+                     })
+                     .attr("y", function(d) {
+                         return regions[d]['center'][1] + 20;
+                     })
+                     .attr("font-size", "40px")
+                     .text(function(d) {
+                               return pints_per_week(d).toString();
+                     });
+/*
+                     .append('svg:tspan')
+                     .attr("x", function(d) {
+                         return regions[d]['center'][0] - 15;
+                     })
+                     .attr("y", function(d) {
+                         return regions[d]['center'][1] + 20;
+                     })
+                     .text("pints per wk");
+*/
+               header.text("average pints per week");
+
+               if (events[year]) {
+                  event_text.text(events[year][0])
+                            .append('svg:tspan')
+                            .attr('opacity', '0.5')
+                            .attr('font-size', "18px")
+                            .attr('x', '900')
+                            .attr('y', '450')
+                            .text(events[year][1]);
+               }
+
+           //    tot_gal = Math.floor(aggregate_years_data(year)[1]);
+           //    total_gallons.text(year.toString() + " gallons: " + tot_gal.toString());
+
+           }; // year label
+
+           var reset = function() {
+               svg.selectAll("rect.chart").remove();
+               svg.selectAll("text.chart_label").remove();
+               svg.selectAll("text.chart_data").remove();
+               svg.selectAll("text.chart_title").remove();
+
+
+               pints.attr("height", "0px")
+                    .attr("width", "0px");
+
+               labels.attr("x", function(d) {
+                         return regions[d]['center'][0] - (d.length * 3.5);
+                     })
+                     .attr("font-size", "20px")
+                     .text(function(d) { return d });
+               header.text("regions");
+               event_text.text("");
+               total_gallons.text("");
+           };
+
+           var reference_graph = function(year) {
+               reset();
+
+               drunk_this_year = aggregate_years_data(year)[0];
+
+               svg.selectAll(".chart")
+                  .data(drunk_this_year)
+                  .enter()
+                  .append("rect")
+                  .attr("class","chart")
+                  .attr("x", 150)
+                  .attr("y", function(d, i) {
+                      return 560 + i * 19;
+                  })
+                  .attr("width", function(d) {
+                      return d['w'];
+                  })
+                  .attr("height", 16)
+                  .transition()
+                  .duration(1250)
+                  .attr('opacity', .8)
+                  .attr("fill", function(d) {
+                       return d['color'];
+                  });
+
+              svg.selectAll(".chart_label")
+                 .data(drunk_this_year)
+                 .enter()
+                 .append("text")
+                 .attr("class", "chart_label")
+                 .attr("x", function(d, i) {
+                     if (i > 3) { // slope text labels backwards
+                        return 200 - ((i - 3) * 10);
+                     }
+                     return 170 + (10 * i);
+                 })
+                 .attr("y", function(d, i) {
+                     return 560 + (i * 19) + 13;
+                 })
+                 .transition()
+                 .duration(2000)
+                 .attr("fill","white")
+                 .text(function(d) {
+                     return d['region_name'];
+                 });
+
+              svg.selectAll(".chart_data")
+                 .data(drunk_this_year)
+                 .enter()
+                 .append("text")
+                 .transition()
+                 .duration(300)
+                 .attr("class", "chart_label")
+                 .attr("x", function (d) {
+                     return 130 + d['w'];
+                 })
+                 .attr("y", function(d, i) {
+                     return 560 + (i * 19) + 13;
+                 })
+                 .attr("fill","white")
+                 .text(function(d) {
+                     return d['drunk'].toString() + " gallons";
+                 });
+
+              svg.append("text")
+                 .attr("class", "chart_title")
+                 .attr("y", 550)
+                 .attr("x", 200)
+                 .attr("fill", "white")
+                 .attr("font-size", "40px")
+                 .attr("opacity", "0.5")
+                 .text(function () {
+                     return year + " Relative Regional Imbibing";
+                 })
+                 .append('svg:tspan')
+                 .transition()
+                 .duration(500)
+                 .attr("y", "550")
+                 .attr("x", "735")
+                 .attr("opacity", "1")
+                 .attr("font-size", "15px")
+                 .text("per capita");
+
+           }; // reference graph
+
+           var year_text = svg.append("text")
+                              .attr("x", width / 2 - 300)
+                              .attr("y", height / 2 + 50)
+                              .attr("font-size", "300px")
+                              .attr("fill", "white")
+                              .style("opacity", "0.25");
+
+	   var year_idx = 0;
+           years['all'] = years['left'].concat(years['right']);
+
+	   var year_interval = setInterval(function() {
+                   reset();
+	           label_year(years['all'][year_idx++]);
+
+                   year_text.text(years['all'][year_idx]);
+
+                   if (year_idx >= years['all'].length) {
+                       reset();
+                       year_text.text("");
+                       clearInterval(year_interval);
+
+                       // draw year buttons
+		       var left_buttons = 
+			   d3.select("body")
+			     .append("div")
+			     .attr("class","left_years_buttons years_buttons")
+			     .selectAll(".left_years_buttons")
+			     .data(years['left'])
+			     .enter()
+			     .append("div")
+			     .text(function(d) {
+				 return d;
+			     });
+
+		       var right_buttons = 
+			   d3.select("body")
+			     .append("div")
+			     .attr("class","right_years_buttons years_buttons")
+			     .selectAll(".right_years_buttons")
+			     .data(years['right'])
+			     .enter()
+			     .append("div")
+			     .text(function(d) {
+				 return d;
+			     });
+
+		       // mouse events - make buttons clickable	
+		       left_buttons.on("click", function(d) {
+
+			       d3.selectAll(".years_buttons")
+				 .selectAll("div")
+				 .transition()
+				 .duration(500)
+				 .style("background", '#6FA7FF');
+
+                               if (selected_year == d) {
+                                  reset();
+                                  selected_year = "";
+                                  return;
+                               }
+
+                               selected_year = d;
+			       d3.select(this)
+				 .transition()
+				 .duration(500)
+				 .style("background", "white");
+
+                               reference_graph(d);
+
+			       label_year(d);
+		       });
+	   
+		       right_buttons.on("click", function(d) {
+
+			       d3.selectAll(".years_buttons")
+				 .selectAll("div")
+				 .transition()
+				 .duration(500)
+				 .style("background", '#6FA7FF');
+
+                               if (selected_year == d) {
+                                  reset();
+                                  selected_year = "";
+                                  return;
+                               }
+
+                               selected_year = d;
+			       d3.select(this)
+				 .transition()
+				 .duration(500)
+				 .style("background", "white");
+
+                               reference_graph(d);
+
+			       label_year(d);
+		       });
+  
+               } // if statement - end of iterations
+  
+           }, 200);
+
+     });
+  } // draw() 
+
+</script>
+</body>
+</html>

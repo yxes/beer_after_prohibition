@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+ <head>
+
+  <title>Beer Consumption by Region</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+ 
+  <meta charset="utf-8">
+  <style>
+    .land {
+      fill: #ccc;
+    }
+    .state-boundary {
+      fill: none;
+      stroke: #fff;
+    }
+   </style>
+
+ </head>
+
+ <body>
+  <script>
+    var width = 1200,
+        height = 600,
+        regions = {
+           'Pacific': {
+               'states': ['AK','CA','HI','ID','NV','OR','WA'],
+               'color': '#FFA07A'
+           },
+           'Rockies': {
+               'states': ['AZ','CO','MT','NM','UT','WY'],
+               'color': '#F08072'
+           },
+           'West North Central': {
+               'states': ['IL','IA','KS','MN','MO','NE','ND','SD','WI'],
+           'color': '#CD5C5C',
+           },
+           'East North Central': {
+	       'states': ['IN','KY','MI','OH','WV'],
+	       'color': '#DC143C',
+           },
+           'Northeast': {
+	       'states': ['CT','DE','DC','ME','MD','MA','NH','NJ','NY','PA','RI','VT'],
+	       'color': '#B22222',
+           },
+	   'South Central': {
+	       'states': ['AR','LA','OK','TX'],
+	       'color': '#8B0000',
+	   },
+	   'Southeast': {
+	       'states': ['AL','FL','GA','MS','NC','SC','TN','VA'],
+	       'color': '#FF0000'
+	   },
+	};
+
+    var state_color = function(state) {
+	for (region in regions) {
+	    for (stateidx in regions[region]['states']) {
+
+		if (regions[region]['states'][stateidx] == state) {
+		   return regions[region]['color'];
+		}
+	     }
+	}
+	return "black";
+    };
+
+    var svg = d3.select("body").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
+    svg.append("rect")
+	.attr("class", "background")
+	.attr("width", width)
+	.attr("height", height);
+
+    var g = svg.append("g")
+	.attr("transform", "translate(" + (width / 2)  + "," + (height / 2 - 100) + ")")
+	.append("g")
+	.attr("id", "states");
+
+    var projection = d3.geo.albersUsa()
+	.scale(width)
+	.translate([0, 100]);
+
+    var path = d3.geo.path()
+	.projection(projection);
+
+    draw();
+
+    function draw(){
+	d3.json("us2.json", function(us) {
+	    var data = topojson.feature(us, us.objects.states).features;
+
+	    // our names
+	    d3.tsv("us-state-names.tsv", function(tsv) {
+		// extract just the names and Ids
+		var names = {};
+		tsv.forEach(function(d, i) {
+		    names[d.id] = d.code;
+		});
+	  
+		// build paths
+		g.append("g")
+		 .attr("class", "states-bundle")
+		 .selectAll("path")
+		 .data(data)
+		 .enter()
+		 .append("path")
+		 .attr("d", path)
+		 .attr("fill", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("stroke", function(d) {
+		   return state_color(names[d.id]);
+		 })
+		 .attr("class", "states");
+
+	   }); // state names function
+       }); // us data function
+
+  } // draw() 
+
+</script>
+</body>
+</html>

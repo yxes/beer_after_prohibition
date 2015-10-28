@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <style>
+     h2, h4{
+        text-align: center;
+        margin: 0px;
+     }
+     h4 {
+        opacity: .5;
+     }
+     .axis path,
+     .axis line {
+         fill: none;
+	 stroke: #ccc;
+         stroke-width: 2.0;
+         shape-rendering: crispEdges;
+     }
+     .y.axis path {
+         display: none;
+     }
+     .y.axis line {
+         stroke: #ccc;
+         stroke-dasharray: 2,2;
+     }
+    </style>
+    
+    <script type="text/javascript">
+      function draw(data) {
+      
+      /* configuration variables */
+
+          "use strict";
+          var margin = 75,
+              width = 1400 - margin,
+              height = 600 - margin,
+              radius = 5,
+	      colors = [
+                '#FFA07A',
+	        '#F08072',
+		'#CD5C5C',
+		'#DC143C',
+		'#B22222',
+		'#8B0000',
+		'#FF0000'
+	      ],
+	      regions = [ // the order has to match the data
+		'Pacific',
+	        'Rockies',
+		'W. North Central',
+		'E. North Central',
+		'Northeast',
+		'South Central',
+		'Southeast'
+	      ];
+
+      /* header (and subheader) */
+
+          d3.select("body")
+            .append("h2")
+            .text("US Beer Consumption following Prohibition")
+
+          d3.select("body")
+            .append("h4")
+            .text("Annual Per Capita (gallons) consumption of Beer by U.S. Region")
+
+      /* min / max values */
+
+          var year_extent = d3.extent(data, function(d) {
+              return d['year'];
+          });
+
+          var drunk_extent = d3.extent(data, function(d) {
+              return d['drunk'];
+          });
+
+      /* scale */
+
+          var year_scale = d3.time.scale()
+              .range([margin, width])
+              .domain(year_extent);
+
+          var drunk_scale = d3.scale.linear()
+              .range([height, margin])
+              .domain(drunk_extent);
+
+      /* chart object - svg */
+
+          var svg = d3.select("body")
+              .append("svg")
+              .attr("width", width + margin)
+              .attr("height", height + margin);
+
+      /* axis */
+
+          // X
+          var year_axis = d3.svg.axis()
+              .scale(year_scale)
+              .ticks(d3.time.years);
+
+          d3.select("svg")
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', "translate(0," + height + ")")
+            .call(year_axis);
+
+          // Y
+          var drunk_axis = d3.svg.axis()
+              .scale(drunk_scale)
+              .orient("right")
+              .tickSize(width - margin + 30);
+
+          d3.select("svg")
+            .append('g')
+            .attr('class', 'y axis')
+            .attr('transform', "translate(" + (margin - 30) + ",0)")
+            .call(drunk_axis)
+            .call(function(g) {
+              g.selectAll("text")
+               .attr("x", 0)
+               .attr("dy", -4);
+            })
+
+     /* scatter plot points */
+
+          d3.select('svg')
+            .selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle");
+
+          d3.selectAll('circle')
+            .attr('cx', function(d) {
+                return year_scale(d['year']);
+            })
+            .attr('cy', function(d) {
+                return drunk_scale(d['drunk']);
+            })
+            .attr('r', radius)
+	    .attr('fill', function(d) {
+                return colors[d['region'] - 1];
+	    });
+
+      /* connecting lines */
+
+	  var lineGen = d3.svg.line()
+	    .x(function(d) {
+	      return year_scale(d['year']);
+	    })
+	    .y(function(d) {
+	         return drunk_scale(d['drunk']);
+	    });
+
+          // to ensure multiple lines we need to break up the data by region
+          var lineData = d3.nest()
+              .key(function(d) {
+                  return d['region']
+              })
+              .entries(data);
+
+          // then we can add the lines
+          lineData.forEach(function(d, i) {
+	      svg.append('svg:path')
+	         .attr('d', lineGen(d.values))
+	         .attr('stroke', function() { // attrs are passed through
+                      return colors[i];
+                 })
+	         .attr('stroke-width', 1)
+	         .attr('fill', 'none');
+          });
+
+     /* legend */
+
+          // this should cover up the Y-Axis lines beneath it
+          // making the legend more readable
+          svg.append("rect")
+             .attr("x", 110)
+             .attr("y", 40)
+             .attr("width", 150)
+             .attr("height", 170)
+             .attr("fill", "white");
+
+          // set the index order for the display of the regions
+          var region_order = [4, 2, 3, 0, 1, 5, 6];
+
+	  var legend = svg.append("g")
+            .attr("class", "legend")
+            .attr("transform", "translate(" + (125) + "," + 60 + ")")
+            .selectAll("g")
+            .data(region_order)
+            .enter()
+	    .append("g");
+
+	  legend.append("circle")
+	    .attr("cy", function(d, i) {
+		return i * 25;
+	    })
+	    .attr("r", radius)
+	    .attr("fill", function(d, i) {
+	        return colors[d];
+	    });
+
+	  legend.append("text")
+	    .attr("y", function(d, i) {
+		return i * 25 + 5;
+	    })
+	    .attr("x", radius + 6)
+	    .text(function(d) {
+		return regions[d];
+	    });
+
+      } // end of draw function
+
+    </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the TSV file
+    and pass the contents of it to the draw function
+    */
+  format = d3.time.format("%Y");
+
+  d3.tsv("beerreg.tsv", function(d) {
+      d['year'] = format.parse(d['year']);
+      d['drunk'] = +d['drunk'];
+      return d;
+  }, draw);
+
+  </script>
+</body>
+</html>

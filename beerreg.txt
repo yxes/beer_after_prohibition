@@ -1,0 +1,36 @@
+Dataset:  beerreg.dat
+
+Source: A.M. McGahan (1991), "The Emergence of the National Brewing
+Oligopoly: Competition in the American Market, 1933-1958", 
+The Business History Review, Vol. 65, #2, pp. 229-284.
+
+Description: Annaul Per Capita (gallons) consumption of Beer by U.S. Region
+
+Variables/Columns
+
+year   5-8
+region    16  /8 1=Pacific, 2=Rockies, 3=West North Central, 4=East North Central,
+        5=Northeast,  6=South Central,   7=Southeast   */
+per capita beer consumption    21-24
+centered year    30-32   /*  year-1946   */
+region 1 indicator   40
+region 2 indicator   48
+region 3 indicator   56
+region 4 indicator   64
+region 5 indicator   72
+region 6 indicator   80
+region 1*centered year   86-88
+region 2*centered year   94-96 
+region 3*centered year   102-104
+region 4*centered year   110-112
+region 5*centered year   118-120
+region 6*centered year   126-128
+
+Regions:
+Pacific: AK,CA,HI,ID,NV,OR,WA
+Rockies: AZ,CO,MT,NM,UT,WY
+West North Central: IL,IA,KS,MN,MO,NE,ND,SD,WI
+East North Central: IN,KY,MI,OH,WV
+Northeast: CT,DE,DC,ME,MD,MA,NH,NJ,NY,PA,RI,VT
+South Central: AR,LA,OK,TX
+Southeast: AL,FL,GA,MS,NC,SC,TN,VA
