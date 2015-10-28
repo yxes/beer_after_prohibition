@@ -7,13 +7,13 @@
 
 ## SECTIONS
 
-* (Summary)[#Summary]
-* (Design)[#Design]
-* (Feedback)[#Feedback]
-* (Resources)[#Resources]
-* (Easter Egg)[#egg]
-* (Motivation)[#Motivation]
-* (Data Sources][#data]
+* [Summary](#Summary)
+* [Design](#Design)
+* [Feedback](#Feedback)
+* [Resources](#Resources)
+* [Easter Egg](#egg)
+* [Motivation](#Motivation)
+* [Data Sources](#data)
 
 ## <a name="Summary"></a> SUMMARY
 
@@ -60,7 +60,7 @@ created a map of the US.**
 
 ### US REGIONAL MAP
 
-(LIVE MAP EXAMPLE)[http://www.stephendwells.com/beer_after_prohibition/]
+[LIVE MAP EXAMPLE](http://www.stephendwells.com/beer_after_prohibition/)
 
 Though the tradtional map did a fine job of showing trends and displaying
 the details of the data, I felt it was important to express the regions
@@ -96,7 +96,7 @@ As the development process continued, I was able to stop at various points
 and get feedback before continuing. It's an extensive process and I outlined
 each step inside of an (easter egg)[#egg] within the live application. However,
 I have provided a 
-(direct link)[http://stephendwells.com/beer_after_prohibition/process.html] for you.
+[direct link](http://stephendwells.com/beer_after_prohibition/process.html) for you.
 
 ### Sketches
 
@@ -121,24 +121,24 @@ I have nothing to say other than that they were both spot on.
 
 Websites, Presentations, Forums and Source Code Links
 
-* (CSS Button Generator)[http://css3buttongenerator.com/]
-* (D3 Documentation)[https://github.com/mbostock/d3/wiki]
-* (D3 Map Example)[http://bost.ocks.org/mike/map/]
-* (JS setInterval function)[http://www.w3schools.com/jsref/met_win_setinterval.asp]
-* (Paletton: Color Picker)[http://paletton.com/]
-* (Information is Beautiful: Inspiration and Humility)[http://www.informationisbeautiful.net/]
-* (Add images with D3)[http://stackoverflow.com/questions/14567809/how-to-add-an-image-to-an-svg-container-using-d3-js]
-* (D3 Shapes)[https://www.dashingd3js.com/svg-basic-shapes-and-d3js]
-* (D3 Stacked Bar Chart)[http://bl.ocks.org/mbostock/3886208]
-* (Animations)[http://blog.visual.ly/creating-animations-and-transitions-with-d3-js/]
-* (Source Code from Various JFire Animations)[http://jfire.io/animations/]
-* (Simple Mouse Over Events)[http://christopheviau.com/d3_tutorial/]
-* (D3 Transitions)[http://blog.andreaskoller.com/2014/02/d3-and-ui-animations/]
-* (KPeng d3 Presentation)[http://kpeng.github.io/d3-workshop/]
+* [CSS Button Generator)[http://css3buttongenerator.com/)
+* [D3 Documentation](https://github.com/mbostock/d3/wiki)
+* [D3 Map Example](http://bost.ocks.org/mike/map/)
+* [JS setInterval function](http://www.w3schools.com/jsref/met_win_setinterval.asp)
+* [Paletton: Color Picker](http://paletton.com/)
+* [Information is Beautiful: Inspiration and Humility](http://www.informationisbeautiful.net/)
+* [Add images with D3](http://stackoverflow.com/questions/14567809/how-to-add-an-image-to-an-svg-container-using-d3-js)
+* [D3 Shapes](https://www.dashingd3js.com/svg-basic-shapes-and-d3js)
+* [D3 Stacked Bar Chart](http://bl.ocks.org/mbostock/3886208)
+* [Animations](http://blog.visual.ly/creating-animations-and-transitions-with-d3-js/)
+* [Source Code from Various JFire Animations](http://jfire.io/animations/)
+* [Simple Mouse Over Events](http://christopheviau.com/d3_tutorial/)
+* [D3 Transitions](http://blog.andreaskoller.com/2014/02/d3-and-ui-animations/)
+* [KPeng d3 Presentation](http://kpeng.github.io/d3-workshop/)
 
 ### <a name="egg"></a> EASTER EGG
 
-There's an easter egg on the (live demo)[http://www.stephendwells.com/beer_after_prohibition/].
+There's an easter egg on the [live demo](http://www.stephendwells.com/beer_after_prohibition/).
 
 Wait until after the animation stops and select the following years in this order:
 
@@ -188,7 +188,7 @@ Vol. 65, No. 2 (Summer, 1991): 229-284. Print.
 The original data file **beerreg.dat** held a lot of information that
 I wasn't going to use, so I cleaned it up with a small python script
 and created, **beerreg.tsv**. In an effort to be reproducible, I put
-the script in the (helper_scripts)[helper_scripts/] directory.
+the script in the [helper_scripts](helper_scripts/) directory.
 
 ### Mapping Data
 
