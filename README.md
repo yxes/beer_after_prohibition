@@ -37,7 +37,7 @@ and the regions come closer together in values.
 
 ### SCATTER PLOT TURNED LINE GRAPH
 
-(LIVE PLOT EXAMPLE)[http://www.stephendwells.com/beer_after_prohibition/plot.html]
+[LIVE PLOT EXAMPLE](http://www.stephendwells.com/beer_after_prohibition/plot.html)
 
 In order to display the relative consumption patterns at first I 
 chose a traditional scatter plot. The X axis being the year and
@@ -105,7 +105,7 @@ of their "artwork" might negatively influence their artistic aspirations.
 
 Here's a couple that we're legible and I was able to get permission to post...
 
-![PLOT 1](sketches/plot.png)
+![PLOT 1](sketches/plot1.png)
 ![PLOT 2](sketches/plot2.jpg)
 ![MAP 1](sketches/map.jpg)
 ![MAP 2](sketches/map2.jpg)
