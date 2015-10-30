@@ -1,9 +1,9 @@
 # US Beer Consumption Following Prohibition
 #### Annual Per Capita consumption of Beer by U.S. Region
 
-### Author: [Stephen D. Wells](http://stephendwells.com/)
-### Live Demo: <http://www.stephendwells.com/beer_after_prohibition/index2.html>
-### GitHub Repo: <http://github.com/yxes/beer_after_prohibition>
+#### Author: [Stephen D. Wells](http://stephendwells.com/)
+#### Live Demo: <http://www.stephendwells.com/beer_after_prohibition/index2.html>
+#### GitHub Repo: <http://github.com/yxes/beer_after_prohibition>
 
 ## SECTIONS
 
