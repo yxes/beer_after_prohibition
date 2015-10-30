@@ -34,6 +34,34 @@
       stroke: #fff;
     }
 
+    div.left_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 30px;
+    }
+
+    div.right_years_buttons{
+      position: fixed;
+      top: 120px;
+      left: 1120px;
+    }
+
+    div.years_buttons div {
+      font-weight: bold;
+      background-color: #6FA7FF;
+      color: #000;
+      padding: 7px;
+      margin: 10px;
+      /* rounded corners */
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      border-radius: 50px;
+    }
+
+    div.years_buttons :hover{
+      background-color: white;
+    }
+
   </style>
 
  </head>
@@ -45,10 +73,7 @@
       Author: Stephen D. Wells <http://linkedin.com/in/sdwells/>
       Github Repo: http://github.com/yxes/beer_after_prohibition
 
-      Version: 1.1
-
-      Changes: added new selection bar after removing buttons to
-               allow for more space.
+      Version: 1.0
 
       Data Source: The Emergence of the National Brewing Oligopoly:
                    Competition in the American Market, 1933-1958
@@ -118,18 +143,18 @@
                'region_no': 7
 	   },
 	},
-        COLORS = ['#002D70','#00388B','#004FC5','#0159DF','#106FFF','#3686FF','#5A9DFE'],
+        COLORS = ["#f7fbff","#deebf7","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#08519c","#08306b"],
         EVENTS = { // [ header, text ]
            1934: ['Great Depression','officially started in 1929'],
            1935: ['Great Depression','Dust Bowl - Black Sunday'],
-           1936: ['Great Depression',''],
-           1937: ['Great Depression','Hindenburg disaster'],
-           1938: ['Great Depression','US Unemployment around 20%'],
-           1939: ['World War II','starts in July'],
-           1940: ['World War II','Austria annexed by Germany'],
-           1941: ['World War II','Germany invades Poland'],
-           1942: ['World War II','Germans enter Paris'],
-           1943: ['World War II','US Joins the war in Dec'],
+           1936: ['Great Depression','Hindenburg disaster'],
+           1937: ['World War II','starts in July'],
+           1938: ['World War II','Austria annexed by Germany'],
+           1939: ['World War II','Germany invades Poland'],
+           1940: ['World War II','Germans enter Paris'],
+           1941: ['World War II','US Joins the war in Dec'],
+           1942: ['World War II',''],
+           1943: ['World War II',''],
            1944: ['World War II',''],
            1945: ['World War II','end of war in May'],
            1954: ['Economy','Pre-depression Stock levels'],
@@ -208,6 +233,42 @@
 		      .attr("stroke", function(d) {
 			return state_info(names[d.id])['color'];
 		      });
+/*
+		      .on("mouseover", function(d) {
+			  if (highlight.length) {
+			     d3.selectAll(highlight[0]).attr('fill', highlight[1]);
+			  }
+
+                          // state_info(state)
+			  var region = state_info(names[d.id])['region'].split(' ').join('_');
+			  var color = state_info(names[d.id])['color'];
+
+			  d3.selectAll("." + region)
+			    .transition()
+			    .duration(200)
+			    .attr('fill', "#EFAA0B");
+
+			  highlight = ['.' + region, color];
+
+			  // there are too many things overlapping the map
+			  //  so if the onMouseOut event doesn't happen - we ensure it repairs
+			  window.setTimeout(function(){
+			    d3.selectAll("." + region)
+			      .transition()
+			      .duration(200)
+			      .attr('fill', color);
+			    highlight = [];
+			  }, 500);
+
+		      })
+		      .on("mouseout", function(d) {
+			  var region = state_info(names[d.id])['region'].split(' ').join('_');
+			  var color = state_info(names[d.id])['color'];
+			  d3.selectAll("." + region)
+			    .attr('fill', color);
+			  highlight = [];
+		      });
+*/
 	   }); // state names function
        }); // us data function
 
@@ -349,7 +410,7 @@
 
            var chart_dat = chart_data();
 
-           var chart =
+           var chart = // XXX
            svg.append("rect")
               .attr("class", "chart_border")
               .attr("x", "47")
@@ -503,22 +564,13 @@
               .text("max");
 
            svg.append("text")
-              .attr("class", "min_max_label")
-              .attr("x", "75")
-              .attr("y", "595")
-              .attr("font-size", "20px")
-              .attr("opacity", "0.3")
-              .attr("fill", "white")
-              .text("");
-
-           svg.append("text")
               .attr("class", "min_text")
               .attr("x", "30")
               .attr("y", "595")
               .attr("font-size", "20px")
               .attr("opacity", ".3")
               .attr("fill", "white")
-              .text("");
+              .text("1.9");
 
            svg.append("text")
               .attr("class", "max_text")
@@ -527,26 +579,7 @@
               .attr("font-size", "20px")
               .attr("opacity", ".3")
               .attr("fill", "white")
-              .text("");
-
-           var set_region_colors = function(year) {
-               var region_values = []; // [region, data]
-               for (var idx in beer_data) {
-                   if (beer_data[idx]['year'].getFullYear() == year) {
-                       for (var region in REGIONS) {
-                           if (REGIONS[region]['region_no'] == beer_data[idx]['region']) {
-                               region_values.push([ region,  beer_data[idx]['drunk'] ]);
-                           }
-                       }
-                   }
-               }
-
-               // sort region values and match to color
-               for (var idx in region_values.sort(function(a, b) { return a[1] - b[1] })) {
-                   d3.selectAll('.' + region_values[idx][0].split(' ').join('_'))
-                     .attr("fill", COLORS[idx]);
-               }
-           }
+              .text("2.3");
 
            // data used to create the horizontal bar chart
            // OUTPUT: { drunk: | color: | region_name: | w: 'width' | x: } ordered by regions
@@ -602,7 +635,6 @@
                    beer_data.forEach(function(row) {
                        if ( (row['region'] == REGIONS[region]['region_no']) &&
                             (row['year'].getFullYear() == year) ) {
-                              // convert gallons (8 pints per gallon - 52 weeks per year)
                               return drunk = (Math.floor((row['drunk'] * 8 / 52) * 10) / 10);
                        }
                    });
@@ -631,7 +663,14 @@
                                return pints_per_week(d).toString();
                            });
 
-               set_region_colors(year);
+               // region colors
+               for (region in REGIONS) {
+                   var pint = pints_per_week(region);
+                   var color = COLORS[Math.floor(pint * 2)];
+debugger;
+                   d3.selectAll("." + region.split(" ").join("_"))
+                     .attr("fill", color);
+               }
 
                header.text("average pints per week");
 
@@ -680,7 +719,6 @@
 
                world_event_text.text("");
 
-               d3.select(".min_max_label").text("");
                d3.select(".max_text").text("");
                d3.select(".min_text").text("");
 
@@ -711,17 +749,7 @@
                   .attr('opacity', ".8")
                   .attr("fill", function(d) {
                        return d['color'];
-                  })
-                  .on("mouseover", function(d) {
-                      set_region_colors(year);
-
-                      d3.selectAll("." + d['region_name'].split(' ').join('_'))
-                        .attr("fill", "#EFAA0B");
-                  })
-                  .on("mouseout", function(d) {
-                      set_region_colors(year);
                   });
-
 
               svg.selectAll(".bar_chart_region")
                  .data(regional_info)
@@ -740,15 +768,6 @@
                  .attr("fill","white")
                  .text(function(d) {
                      return d['region_name'];
-                 })
-                 .on("mouseover", function(d) {
-                     set_region_colors(year);
-
-                     d3.selectAll("." + d['region_name'].split(' ').join('_'))
-                       .attr("fill", "#EFAA0B");
-                 })
-                 .on("mouseout", function(d) {
-                     set_region_colors(year);
                  });
 
               svg.selectAll(".bar_chart_data")
@@ -788,7 +807,7 @@
 
            }; // reference graph
 
-           // large year label overlaying map image
+           // large year overlaying map image during automation
            var giant_year_label = 
                svg.append("text")
                   .attr("x", WIDTH / 2 - 200)
@@ -814,7 +833,7 @@
 
                    giant_year_label.text(years['all'][year_idx]);
 
-                   d3.select(".chart_line_" + years['all'][year_idx])
+                  d3.select(".chart_line_" + years['all'][year_idx])
                      .attr("opacity", 1);
 
                    d3.select(".chart_text_" + years['all'][year_idx])
@@ -823,7 +842,6 @@
 
                    d3.select(".min_text").text(min_max_year(years['all'][year_idx])[0]);
                    d3.select(".max_text").text(min_max_year(years['all'][year_idx])[1]);
-                   d3.select(".min_max_label").text("gallons");
 
                    ++year_idx;
 
@@ -835,6 +853,7 @@
 
                        d3.selectAll(".chart_selection")
                          .on("mouseover", function(year) {
+
                              horizontal_bar_chart(year);
 
 			     region_label(year);
@@ -851,12 +870,75 @@
                              d3.select(".max_text")
                                .text(min_max_year(year)[1]);
 
-                             d3.select(".min_max_label")
-                               .text("gallons");
-
                              giant_year_label.text(year);
-                         });
 
+                         });
+/*
+                       var button_click =
+                           function (me, year) {
+                               // reset all background colors
+			       d3.selectAll(".years_buttons")
+				 .selectAll("div")
+				 .transition()
+				 .duration(500)
+				 .style("background", '#6FA7FF');
+
+                               // reset chart background colors
+                               d3.selectAll(".chart")
+                                 .attr("fill", "")
+                                 .attr("stroke", "white");
+
+                               // selecting the current year - resets to region labels
+                               if (selected_year == year) {
+                                  reset();
+                                  selected_year = "";
+                                  return;
+                               }
+
+                               selected_year = year;
+
+                               // highlight selected year
+			       d3.select(me)
+				 .transition()
+				 .duration(500)
+				 .style("background", "#EFAA0B");
+
+                               d3.select(".chart_" + year)
+                                 .attr("fill", "#EFAA0B");
+
+                               horizontal_bar_chart(year);
+
+                               giant_year_label.text(year);
+
+			       region_label(year);
+                           };
+ 
+			 });
+       
+		       d3.select("body")
+			 .append("div")
+			 .attr("class","right_years_buttons years_buttons")
+			 .selectAll(".right_years_buttons")
+			 .data(years['right'])
+			 .enter()
+			 .append("div")
+			 .on("mouseover", function(year) {
+			     if (selected_year != year) {
+				 d3.select(this).style('background', 'white');
+			     }
+			 })
+			 .on("mouseout", function(year) {
+			     if (selected_year != year) {
+				 d3.select(this).style('background', '#6FA7FF');
+			     }
+			 })
+			 .text(function(d) {
+			     return d;
+			 })
+			 .on("click", function(year) {
+			     button_click(this, year);
+			 });
+*/
                } // if statement - end of iterations
   
            }, ITERATION_TIME);

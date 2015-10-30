@@ -11,7 +11,6 @@
 * [Design](#Design)
 * [Feedback](#Feedback)
 * [Resources](#Resources)
-* [Easter Egg](#egg)
 * [Motivation](#Motivation)
 * [Data Sources](#data)
 
@@ -62,20 +61,26 @@ created a map of the US.**
 
 ### US REGIONAL MAP
 
-[LIVE MAP EXAMPLE](http://www.stephendwells.com/beer_after_prohibition/)
+[LIVE MAP EXAMPLE](http://www.stephendwells.com/beer_after_prohibition/index2.html)
 
 Though the tradtional map did a fine job of showing trends and displaying
 the details of the data, I felt it was important to express the regions
 in a more meaningful way. The new map comes complete with scalable pint
 images (by area so the scales are exact), a horizontal bar chart and
-a selection of years displayed as buttons on either side. Using animation
-I developed a martini glass structure that follows a tight narrative early
-on (the stem) and opens up for free exploration (the body of the glass)
-after. In order to express the differences between regions more
-effectively, there's a horizontal bar chart that appears during the
-readers exploratory phase. Mousover events cause a flash of color to
-draw the eye as a link between the two displays and quickly outline
-a given region.
+a selection plot based on the broad scope of things I learned from the
+plot.
+
+Using animation I developed a martini glass structure that follows a
+tight narrative early on (the stem) and opens up for free exploration
+(the body of the glass) after. These events walk through a vertical 
+line chart with the plotted minimum and maximum values, overlaid with
+world events. This chart effectively becomes an input device after
+the animation completes.
+
+In order to express the differences between regions more effectively,
+there's a horizontal bar chart that appears during the readers 
+exploratory phase. Mousover events use a splash of color to draw the
+eye as a link between the two displays and highlights a given region.
 
 ## <a name="Feedback"></a> FEEDBACK
 
@@ -95,11 +100,11 @@ were instrumental in the direction.
 * Sara Messier - Digital Artist - Cedar Rapids, IA
 
 As the development process continued, I was able to stop at various points
-and get feedback before continuing. It's an extensive process and I outlined
-each step inside of an [easter egg](#egg) within the live application. However,
+and get feedback before continuing.
+
 I have provided a 
 [direct link](http://www.stephendwells.com/beer_after_prohibition/process.html)
-for you.
+to that process.
 
 ### Sketches
 
@@ -138,20 +143,6 @@ Websites, Presentations, Forums and Source Code Links
 * [Simple Mouse Over Events](http://christopheviau.com/d3_tutorial/)
 * [D3 Transitions](http://blog.andreaskoller.com/2014/02/d3-and-ui-animations/)
 * [KPeng d3 Presentation](http://kpeng.github.io/d3-workshop/)
-
-### <a name="egg"></a> EASTER EGG
-
-There's an easter egg on the [live demo](http://www.stephendwells.com/beer_after_prohibition/).
-
-Wait until after the animation stops and select the following years in this order:
-
-* 1944
-* 1949
-* 1937
-* 1941
-
-This will reveal the entire process of designing the app and the iterations
-that I went through as it was being developed.
 
 ## <a name="Motivation"></a> MOTIVATION
 
