@@ -129,6 +129,8 @@ I have nothing to say other than that they were both spot on.
 
 Websites, Presentations, Forums and Source Code Links
 
+* [Bar Chart Tutorial](http://bost.ocks.org/mike/bar/)
+* [D3 Color Scales](http://www.jeromecukier.net/blog/2011/08/11/d3-scales-and-color/)
 * [CSS Button Generator](http://css3buttongenerator.com/)
 * [D3 Documentation](https://github.com/mbostock/d3/wiki)
 * [D3 Map Example](http://bost.ocks.org/mike/map/)
